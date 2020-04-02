@@ -86,47 +86,6 @@ for (i in 1:99)
   
 }
 
-i = 100
-e_star[i] = 611.2*exp((17.67*(Temp[i]-273.15))/((Temp[i]-273.15)+243.5))
-r_star[i] = (R_d/R_v)*(e_star[i]/(P[i]-e_star[i]))
-q_star[i] = r_star[i]/(1+r_star[i])
-
-# finds q_star altitude for given q
-q = 0
-i = 100   # index value reset
-while (q < given_q)
-{
-  q = q_star[i]
-  i = i - 1
-}
-z_star   = z[i]      # m altitude on curve of given_q
-
-# finds curve_q for given z
-i        = 1   # index value reset
-curve_z  = 0   # m holder value
-curve_q  = 0   # g/kg
-while (curve_z < given_z)
-{
-  curve_z = z[i]
-  i = i + 1
-}
-
-curve_q = q_star[i]  # point on curve for given altitude
-
-# partition
-q_l = 0
-q_v = 0
-
-if (given_z < z_star) 
-{
-  q_l = 0
-  q_v = given_q 
-} else 
-    { 
-      q_l = given_q - curve_q
-      q_v = given_q - q_l
-    }
-
 # fun plots
 plot(P, z, xlim=c(1000, 100000))
 lines(e_star, z, type = "p")
