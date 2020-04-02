@@ -79,7 +79,9 @@ for (i in 1:99)
       }
       
       Temp[i+1] = Temp_new
-      
+      q_l[i+1]  = q_l_new
+      q_v[i+1]  = q_v[i+1] - q_l[i+1]
+    
     }
   
 }
