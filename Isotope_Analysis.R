@@ -54,8 +54,9 @@ for (i in 1:99)
     {
       Temp_old = Temp[i+1]
       q_star_old = q_star_new
-      dq_l_old = q_v - q_star_new
+      dq_l_old = q_v[i+1] - q_star_new
       dTemp_old = 0
+      q_l_old = 0 + dq_l_old
   
       dTemp_new = 1000  # to start while loop
     
@@ -65,16 +66,20 @@ for (i in 1:99)
         Temp_new = Temp_old + dTemp_new
     
         e_star_new = 611.2*exp((17.67*(Temp_new-273.15))/((Temp_new-273.15)+243.5))
-        r_star_new = (R_d/R_v)*(e_star_new/(P[i]-e_star_new))
+        r_star_new = (R_d/R_v)*(e_star_new/(P[i+1]-e_star_new))
         q_star_new = r_star_new/(1+r_star_new)
     
         dq_l_new = q_star_old - q_star_new
+        q_l_new = q_l_old + dq_l_new
     
         Temp_old = Temp_new
         dTemp_old = dTemp_new
         q_star_old = q_star_new
         dq_l_old = dq_l_new
       }
+      
+      Temp[i+1] = Temp_new
+      
     }
   
 }
