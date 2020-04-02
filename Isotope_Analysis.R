@@ -50,29 +50,32 @@ for (i in 1:99)
   r_star_new = (R_d/R_v)*(e_star_new/(P[i+1]-e_star_new))
   q_star_new = r_star_new/(1+r_star_new)
   
-  Temp_old = Temp[i]
-  q_star_old = q_star[i]
-  dq_l_old = q_l
-  dTemp_old = 0
+  if (q_v[i+1] > q_star_new) 
+    {
+      Temp_old = Temp[i+1]
+      q_star_old = q_star_new
+      dq_l_old = q_v - q_star_new
+      dTemp_old = 0
   
-  dTemp_new = 1000  # to start while loop
-  
-  while (abs(dTemp_new) > 0.01)
-  {
-    dTemp_new = (L_v/C_p) * dq_l_old
-    Temp_new = Temp_old + dTemp_new
+      dTemp_new = 1000  # to start while loop
     
-    e_star_new = 611.2*exp((17.67*(Temp_new-273.15))/((Temp_new-273.15)+243.5))
-    r_star_new = (R_d/R_v)*(e_star_new/(P[i]-e_star_new))
-    q_star_new = r_star_new/(1+r_star_new)
+      while (abs(dTemp_new) > 0.01)
+      {
+        dTemp_new = (L_v/C_p) * dq_l_old
+        Temp_new = Temp_old + dTemp_new
     
-    dq_l_new = q_star_old - q_star_new
+        e_star_new = 611.2*exp((17.67*(Temp_new-273.15))/((Temp_new-273.15)+243.5))
+        r_star_new = (R_d/R_v)*(e_star_new/(P[i]-e_star_new))
+        q_star_new = r_star_new/(1+r_star_new)
     
-    Temp_old = Temp_new
-    dTemp_old = dTemp_new
-    q_star_old = q_star_new
-    dq_l_old = dq_l_new
-  }
+        dq_l_new = q_star_old - q_star_new
+    
+        Temp_old = Temp_new
+        dTemp_old = dTemp_new
+        q_star_old = q_star_new
+        dq_l_old = dq_l_new
+      }
+    }
   
 }
 
