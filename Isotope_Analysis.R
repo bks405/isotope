@@ -85,6 +85,21 @@ if (given_z < z_star)
       q_v = given_q - q_l
     }
 
+## CURRENTLY IN PROGRESS ##
+# convergence to find q_l and q_v after temp fluctuations
+i = 1       # dummy variable? not sure if need to use i or k
+dq_l = 0    # condensation rate
+dTemp = 0   # temperature change due to condensation
+
+while (abs(dTemp) > 0.01)
+{
+  dq_l[i] = q_v[i] - q_star[r_star[e_star[Temp[i]]]]
+  dTemp = (L_v/C_p) * dq_l[i]
+  Temp_new[i] = Temp[i] + dTemp
+  q_star[Temp[i]] = q_star[Temp_new[i]]
+  dq_l_new = q_v[i] - q_star[Temp[i]]
+}
+
 # fun plots
 plot(P, z, xlim=c(1000, 100000))
 lines(e_star, z, type = "p")
