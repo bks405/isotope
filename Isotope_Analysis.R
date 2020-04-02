@@ -22,6 +22,8 @@ given_z = 1500    # m
 z       = array(0,100)
 Temp    = array(0,100)
 P       = array(0,100)
+q_v     = array(0,100)
+q_l     = array(0,100)
 e_star  = array(0,100)
 r_star  = array(0,100)
 q_star  = array(0,100)
@@ -31,6 +33,8 @@ z[1]    = 10      # m
 dz      = 20      # m
 Temp[1] = 300     # K
 P[1]    = 101500  # Pa
+q_v[1]  = 0.014   # g/kg
+q_l[1]  = 0       # g/kg
 
 # loop
 for (i in 1:99)
@@ -38,10 +42,14 @@ for (i in 1:99)
   z[i+1]    = z[i] + dz
   Temp[i+1] = Temp[i] - gamma_d * dz
   P[i+1]    = P[i] - (P[i] / (R_d * Temp[i])) * g * dz
+  q_v[i+1]  = q_v[i]
   
-  e_star[i] = 611.2*exp((17.67*(Temp[i]-273.15))/((Temp[i]-273.15)+243.5))
-  r_star[i] = (R_d/R_v)*(e_star[i]/(P[i]-e_star[i]))
-  q_star[i] = r_star[i]/(1+r_star[i])
+  e_star_new = 611.2*exp((17.67*(Temp[i+1]-273.15))/((Temp[i+1]-273.15)+243.5))
+  r_star_new = (R_d/R_v)*(e_star_new/(P[i+1]-e_star_new))
+  q_star_new = r_star_new/(1+r_star_new)
+  
+  
+  
 }
 
 i = 100
