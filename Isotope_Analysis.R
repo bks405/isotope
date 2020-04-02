@@ -91,9 +91,10 @@ i = 1       # dummy variable? not sure if need to use i or k
 dq_l = 0    # condensation rate
 dTemp = 0   # temperature change due to condensation
 
+dq_l[i] = q_v[i] - q_star[i]
+
 while (abs(dTemp) > 0.01)
 {
-  dq_l[i] = q_v[i] - q_star[r_star[e_star[Temp[i]]]]
   dTemp = (L_v/C_p) * dq_l[i]
   Temp_new[i] = Temp[i] + dTemp
   q_star[Temp[i]] = q_star[Temp_new[i]]
