@@ -88,22 +88,31 @@ if (given_z < z_star)
 ## CURRENTLY IN PROGRESS ##
 # convergence to find q_l and q_v after temp fluctuations
 i = 1    # dummy variable   
-Temp_old[i] = Temp[i]
 
-dq_l[i] = q_v[i] - q_star[i]
-dTemp_old = (L_v/C_p) * dq_l[i]
-Temp_new = Temp[i] + dTemp_old
+Temp_old = Temp[i]
+q_star_old = q_star[i]
+dq_l_old = q_l
+dTemp_old = 0
 
-while (abs(dTemp_new - dTemp_old) > 0.01)
+dTemp_new = 1000  # to start while loop
+
+while (abs(dTemp_new) > 0.01)
 {
-  dTemp = (L_v/C_p) * dq_l[i]
-  Temp_new[i] = Temp[i] + dTemp
+  dTemp_new = (L_v/C_p) * dq_l_old
+  Temp_new = Temp_old + dTemp_new
   
   e_star[i] = 611.2*exp((17.67*(Temp_new[i]-273.15))/((Temp_new[i]-273.15)+243.5))
   r_star[i] = (R_d/R_v)*(e_star[i]/(P[i]-e_star[i]))
   q_star[i] = r_star[i]/(1+r_star[i])
   
-  dq_l = q_v[i] - q_star[i]
+  q_star_new = q_star[i]
+  
+  dq_l_new = q_star_old - q_star_new
+  
+  Temp_old = Temp_new
+  dTemp_old = dTemp_new
+  q_star_old = q_star_new
+  dq_l_old = dq_l_new
 }
 
 # fun plots
