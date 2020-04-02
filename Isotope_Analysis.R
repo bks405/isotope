@@ -37,6 +37,7 @@ Temp[1] = 300     # K
 P[1]    = 101500  # Pa
 q_v[1]  = 0.014   # g/kg
 q_l[1]  = 0       # g/kg
+Tmp     = 0
 
 # loop
 for (i in 1:99)
@@ -60,8 +61,10 @@ for (i in 1:99)
   
       dTemp_new = 1000  # to start while loop
     
-      while (abs(dTemp_new) > 0.01)
+      while (abs(dTemp_new) > 0.01 & Tmp < 100)
       {
+        Tmp = Tmp + 1
+        
         dTemp_new = (L_v/C_p) * dq_l_old
         Temp_new = Temp_old + dTemp_new
     
@@ -70,8 +73,10 @@ for (i in 1:99)
         q_star_new = r_star_new/(1+r_star_new)
     
         dq_l_new = q_star_old - q_star_new
-        q_l_new = q_l_old + dq_l_new
+        q_l_new = q_l_old - dq_l_new
     
+        print(q_star_new)
+        
         Temp_old = Temp_new
         dTemp_old = dTemp_new
         q_star_old = q_star_new
@@ -81,17 +86,6 @@ for (i in 1:99)
       Temp[i+1] = Temp_new
       q_l[i+1]  = q_l_new
       q_v[i+1]  = q_v[i+1] - q_l[i+1]
-    
+      
     }
-  
 }
-
-# fun plots
-plot(P, z, xlim=c(1000, 100000))
-lines(e_star, z, type = "p")
-
-plot(P,z)
-
-plot(e_star,z)
-plot(r_star,z)
-plot(q_star,z, type = "l")
