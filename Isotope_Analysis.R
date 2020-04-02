@@ -101,11 +101,9 @@ while (abs(dTemp_new) > 0.01)
   dTemp_new = (L_v/C_p) * dq_l_old
   Temp_new = Temp_old + dTemp_new
   
-  e_star[i] = 611.2*exp((17.67*(Temp_new[i]-273.15))/((Temp_new[i]-273.15)+243.5))
-  r_star[i] = (R_d/R_v)*(e_star[i]/(P[i]-e_star[i]))
-  q_star[i] = r_star[i]/(1+r_star[i])
-  
-  q_star_new = q_star[i]
+  e_star_new = 611.2*exp((17.67*(Temp_new-273.15))/((Temp_new-273.15)+243.5))
+  r_star_new = (R_d/R_v)*(e_star_new/(P[i]-e_star_new))
+  q_star_new = r_star_new/(1+r_star_new)
   
   dq_l_new = q_star_old - q_star_new
   
