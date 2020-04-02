@@ -1,6 +1,6 @@
 ## UROP Hawai'i Isotope Analysis Program
 ## Authors: Britt Seifert and Eleanore Law
-## Latest Update: March 9, 2020
+## Latest Update: April 1, 2020
 
 ## working directory
 setwd("~/Documents/UROP")
@@ -13,6 +13,8 @@ R_d     = 287     # J/kgK
 R_v     = 461     # J/kgK
 gamma_d = 0.0098  # K/m
 e       = 0.0014  # kg/kg
+L_v     = 2.5e6   # J/kg
+C_p     = 1005    # J/kgK
 
 # input values
 given_q = 0.014   # kg/kg
@@ -48,7 +50,29 @@ for (i in 1:99)
   r_star_new = (R_d/R_v)*(e_star_new/(P[i+1]-e_star_new))
   q_star_new = r_star_new/(1+r_star_new)
   
+  Temp_old = Temp[i]
+  q_star_old = q_star[i]
+  dq_l_old = q_l
+  dTemp_old = 0
   
+  dTemp_new = 1000  # to start while loop
+  
+  while (abs(dTemp_new) > 0.01)
+  {
+    dTemp_new = (L_v/C_p) * dq_l_old
+    Temp_new = Temp_old + dTemp_new
+    
+    e_star_new = 611.2*exp((17.67*(Temp_new-273.15))/((Temp_new-273.15)+243.5))
+    r_star_new = (R_d/R_v)*(e_star_new/(P[i]-e_star_new))
+    q_star_new = r_star_new/(1+r_star_new)
+    
+    dq_l_new = q_star_old - q_star_new
+    
+    Temp_old = Temp_new
+    dTemp_old = dTemp_new
+    q_star_old = q_star_new
+    dq_l_old = dq_l_new
+  }
   
 }
 
@@ -70,7 +94,7 @@ z_star   = z[i]      # m altitude on curve of given_q
 # finds curve_q for given z
 i        = 1   # index value reset
 curve_z  = 0   # m holder value
-curve_q  = 0   # units??
+curve_q  = 0   # g/kg
 while (curve_z < given_z)
 {
   curve_z = z[i]
@@ -92,34 +116,6 @@ if (given_z < z_star)
       q_l = given_q - curve_q
       q_v = given_q - q_l
     }
-
-## CURRENTLY IN PROGRESS ##
-# convergence to find q_l and q_v after temp fluctuations
-i = 1    # dummy variable   
-
-Temp_old = Temp[i]
-q_star_old = q_star[i]
-dq_l_old = q_l
-dTemp_old = 0
-
-dTemp_new = 1000  # to start while loop
-
-while (abs(dTemp_new) > 0.01)
-{
-  dTemp_new = (L_v/C_p) * dq_l_old
-  Temp_new = Temp_old + dTemp_new
-  
-  e_star_new = 611.2*exp((17.67*(Temp_new-273.15))/((Temp_new-273.15)+243.5))
-  r_star_new = (R_d/R_v)*(e_star_new/(P[i]-e_star_new))
-  q_star_new = r_star_new/(1+r_star_new)
-  
-  dq_l_new = q_star_old - q_star_new
-  
-  Temp_old = Temp_new
-  dTemp_old = dTemp_new
-  q_star_old = q_star_new
-  dq_l_old = dq_l_new
-}
 
 # fun plots
 plot(P, z, xlim=c(1000, 100000))
