@@ -3,7 +3,7 @@
 ## Latest Update: April 10, 2020
 
 ## working directory
-## setwd("~/Documents/UROP")
+setwd("~/Documents/UROP")
 
 ## packages
 
@@ -25,50 +25,58 @@ Temp    = array(0,Nz)
 P       = array(0,Nz)
 qv      = array(0,Nz)
 ql      = array(0,Nz)
-
+RD_v    = array(0,Nz)
+R180_v  = array(0,Nz)
 
 ## define starting values
-z[1]    = 10      # m
-dz      = 20      # m
-Temp[1] = 300     # K
-P[1]    = 101500  # Pa
-qv[1]   = 0.014   # kg/kg
-ql[1]   = 0.00    # kg/kg
-tmp     = 0
-
+z[1]      = 10      # m
+dz        = 20      # m
+Temp[1]   = 300     # K
+P[1]      = 101500  # Pa
+qv[1]     = 0.014   # kg/kg
+ql[1]     = 0.00    # kg/kg
+RD_v[1]   = 0.9     # per mil
+R180_v[1] = 0.985   # per mil
+tmp       = 0
 
 ## loop
 for(i in 1:(Nz-1)){
-	
-	z[i+1]    = z[i]+dz
-	Temp[i+1] = Temp[i]-gamma_d*dz
-	P[i+1]    = P[i]-(P[i]/(R_d*Temp[i+1]))*g*dz
-	qs_i      = q_sat(P[i+1],Temp[i+1])
-	qv[i+1]   = qv[i]
-	
-	if (qv[i+1] > qs_i) {
-    	
-    	tmp  = 0
-    	Tp_i = Temp[i+1] 		   
-    	dTp  = 100
-    	
-    	while(abs(dTp) > 1e-6 && tmp < 100){
-    		   		
-    		tmp  = tmp + 1
-    		
-			fun  = Tp_i - Temp[i+1] - L_v/C_p*(qv[i+1]-q_sat(P[i+1],Tp_i))
-			der  = 1 + L_v/C_p*dqsat_dT(P[i+1],Tp_i)
-			 
-			dTp  = -fun/der
-			Tp_i = Tp_i+dTp
-    		
-    	}
-    
-    	Temp[i+1] = Tp_i
-     	ql[i+1]   = qv[i+1]-q_sat(P[i+1],Temp[i+1]) 	
-    	qv[i+1]   = q_sat(P[i+1],Temp[i+1]) 
-    
-    }
   
+  z[i+1]    = z[i]+dz
+  Temp[i+1] = Temp[i]-gamma_d*dz
+  P[i+1]    = P[i]-(P[i]/(R_d*Temp[i+1]))*g*dz
+  qs_i      = q_sat(P[i+1],Temp[i+1])
+  qv[i+1]   = qv[i]
+  
+  if (qv[i+1] > qs_i) {
+    
+    tmp  = 0
+    Tp_i = Temp[i+1] 		   
+    dTp  = 100
+    
+    while(abs(dTp) > 1e-6 && tmp < 100){
+      
+      tmp  = tmp + 1
+      
+      fun  = Tp_i - Temp[i+1] - L_v/C_p*(qv[i+1]-q_sat(P[i+1],Tp_i))
+      der  = 1 + L_v/C_p*dqsat_dT(P[i+1],Tp_i)
+      
+      dTp  = -fun/der
+      Tp_i = Tp_i+dTp
+      
+    }
+    
+    Temp[i+1] = Tp_i
+    ql[i+1]   = qv[i+1]-q_sat(P[i+1],Temp[i+1]) 	
+    qv[i+1]   = q_sat(P[i+1],Temp[i+1]) 
+    
+  }
+  
+  a_D    = a_eq(1,Temp[i+1])
+  a_180  = a_eq(2,Temp[i+1])
+  
+  RD_v[i+1]   = RD_v[1] * (qv[i+1]/qv[1])^(a_D - 1)
+  R180_v[i+1] = R180_v[1] * (qv[i+1]/qv[1])^(a_180 - 1)
+
 }
 
